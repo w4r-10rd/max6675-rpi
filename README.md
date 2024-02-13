@@ -1,4 +1,4 @@
-**# max6675-k_rpi_IIOT-Framework**
+# max6675-k_rpi_IIOT-Framework
 _max6675k connected with raspberrypi to enact as a complete temperature analysis solution._
 
 This repository is for those framework that has or uses MAX6675-K module for its operation.
