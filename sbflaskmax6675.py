@@ -6,7 +6,7 @@ app = Flask(__name__)
 socketio = SocketIO(app)
 
 # MQTT broker and topic information
-broker_address = "192.168.0.131"
+broker_address = "test.mosquitto.org"
 port = 1883
 topic_prefix = "temperaturepi3b"
 
