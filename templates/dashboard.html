@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Temperature Dashboard</title>
+<style>
+/* Style for the dashboard container */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Style for the gauge */
+.gauge {
+  width: 200px;
+  height: 200px;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+/* Style for the gauge progress */
+.progress {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 0.1rem solid var(--white);
+  border-bottom: 0.1rem solid var(--gray);
+  border-radius: 50%;
+  outline: 0.2rem solid var(--white);
+  outline-offset: 0.4rem;
+  overflow: hidden;
+}
+
+/* Style for the gauge needle */
+.needle {
+  width: 2px;
+  height: 100px;
+  background-color: black;
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
+  transform-origin: bottom;
+  transform: translateX(-50%) rotate(0deg);
+  transition: transform 0.5s ease;
+  z-index: 2;
+}
+
+/* Style for temperature scale */
+.scale {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Style for temperature scale labels */
+.scale-label {
+  font-size: 12px;
+  position: relative;
+}
+
+/* Style for temperature range colors */
+.range-blue { background-color: blue; }
+.range-green { background-color: green; }
+.range-yellow { background-color: yellow; }
+.range-red { background-color: red; }
+
+/* Style for temperature value */
+.temperature-value {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Define colors */
+:root {
+  --gray: rgb(34, 48, 64);
+  --white: rgb(253, 251, 252);
+  --blue: rgb(0, 122, 253);
+  --green: rgb(6, 215, 108);
+  --yellow: rgb(255, 235, 59);
+  --red: rgb(255, 87, 34);
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="gauge">
+    <div class="progress">
+      <div class="needle" id="needle"></div>
+    </div>
+  </div>
+  <div class="temperature-value" id="temperatureValue">Temperature: --°C</div>
+</div>
+
+<div class="scale">
+  <span class="scale-label">0°C</span>
+  <span class="scale-label">10°C</span>
+  <span class="scale-label">20°C</span>
+  <span class="scale-label">30°C</span>
+  <span class="scale-label">40°C</span>
+  <span class="scale-label">50°C</span>
+  <span class="scale-label">60°C</span>
+  <span class="scale-label">70°C</span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
+<script>
+var socket = io.connect('http://' + document.domain + ':' + location.port + '/temperature');
+
+// Initial update
+updateTemperature();
+
+// Update temperature every 5 seconds
+setInterval(updateTemperature, 1000);
+
+function updateTemperature() {
+  socket.emit('get_temperature');
+}
+
+socket.on('temperature_update', function(data) {
+  var temperature = parseFloat(data.temperature);
+  updateGauge(temperature);
+  displayTemperature(temperature);
+});
+
+function updateGauge(temperature) {
+  var needle = document.getElementById("needle");
+  var angle = calculateAngle(temperature);
+  needle.style.transform = "translateX(-50%) rotate(" + angle + "deg)";
+  
+  // Apply color based on temperature range
+  var gauge = document.querySelector(".gauge");
+  gauge.classList.remove("range-blue", "range-green", "range-yellow", "range-red");
+  if (temperature >= 0 && temperature <= 25) {
+    gauge.classList.add("range-blue");
+  } else if (temperature > 25 && temperature <= 46) {
+    gauge.classList.add("range-green");
+  } else if (temperature > 46 && temperature <= 70) {
+    gauge.classList.add("range-yellow");
+  } else {
+    gauge.classList.add("range-red");
+  }
+}
+
+function calculateAngle(temperature) {
+  // Assuming temperature ranges from 0 to 100+
+  var angle = (temperature / 100) * 270; // 270-degree range
+  // Limit the angle to a maximum of 270 degrees
+  angle = Math.min(angle, 270);
+  return angle;
+}
+
+function displayTemperature(temperature) {
+  var temperatureValueElement = document.getElementById("temperatureValue");
+  temperatureValueElement.textContent = "Temperature: " + temperature.toFixed(2) + "°C";
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Temperature and Humidity</title>
+    <script>
+        function autoReload() {
+            setTimeout(function() {
+                location.reload();
+            }, 1000); // Reload the page every 1000 milliseconds (1 second)
+        }
+        autoReload(); // Call the function to start the auto-reload process
+    </script>
+</head>
+<body>
+    <h1>Temperature and Humidity</h1>
+    <p>Actual Temperature: {{ actual_temperature }}&deg;C</p>
+    <p>Filtered Temperature: {{ filtered_temperature }}&deg;C</p>
+    <p>Actual Humidity: {{ actual_humidity }}%</p>
+    <p>Filtered Humidity: {{ filtered_humidity }}%</p>
+</body>
+</html>
