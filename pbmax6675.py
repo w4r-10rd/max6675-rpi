@@ -3,7 +3,7 @@ import time
 import spidev
 
 # MQTT broker and topic information
-broker_address = "192.168.0.131"  # Use the test.mosquitto.org MQTT broker
+broker_address = "test.mosquitto.org"  # Use the test.mosquitto.org MQTT broker
 port = 1883  # Default MQTT port
 topic_prefix = "temperaturepi3b"  # Replace with your desired topic prefix
 
